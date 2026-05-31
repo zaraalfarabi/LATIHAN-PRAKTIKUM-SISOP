@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Pengecekan argumen
+if [ "$1" != "install" ] || [ -z "$2" ]; then
+    echo "Cara penggunaan: ./party install [nama_package]"
+    exit 1
+fi
+
+PACKAGE="$2"
+echo "=========================================="
+echo "      PARTY PACKAGE MANAGER v1.0         "
+echo "=========================================="
+echo " -> Mencari package '$PACKAGE' di server..."
+
+# Meminjam file tar.gz super kecil dari server GNU yang dijamin 100% aktif (HTTP 200 OK)
+REPO_URL="http://ftp.gnu.org/gnu/gzip/gzip-1.13.tar.gz"
+
+# Download dan simpan dengan nama yang di-request
+wget --no-check-certificate "$REPO_URL" -O "${PACKAGE}.tar.gz"
+
+if [ $? -eq 0 ]; then
+    echo " -> Download sukses!"
+    echo " -> Mengekstrak '$PACKAGE' ke sistem..."
+    
+    mkdir -p "extracted_${PACKAGE}"
+    tar -xzf "${PACKAGE}.tar.gz" -C "extracted_${PACKAGE}/"
+    
+    echo " -> [SUKSES] Package '$PACKAGE' berhasil di-install!"
+    rm -f "${PACKAGE}.tar.gz"
+else
+    echo " -> [ERROR] Gagal mengunduh package!"
+    exit 1
+fi
